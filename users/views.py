@@ -4,8 +4,8 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from user.models import Member
-from user.serializers import MemberSerializer
+from users.models import Member
+from users.serializers import MemberSerializer
 
 
 class MemberViewSet(ModelViewSet):
@@ -13,7 +13,7 @@ class MemberViewSet(ModelViewSet):
     serializer_class = MemberSerializer
 
     def get_queryset(self):
-        return Member.objects.all.filter(id=self.request.user.member.id)
+        return Member.objects.all()
 
     def create(self, request, *args, **kwargs):
         serializer = MemberSerializer(data=request.data)

@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'groups',
     'photos',
     'documents',
-    'django_extensions',
     'rest_framework',
 ]
 

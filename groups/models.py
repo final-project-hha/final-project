@@ -15,6 +15,7 @@ class Group(models.Model):
     # document = models.ForeignKey(Documents, null=True)
     members = models.ManyToManyField('users.Member', related_name='groups', blank=True)
     # admins = models.ManyToManyField('users.Member', null=True, on_delete=models.SET_DEFAULT, default=User.admin)
+
     def __str__(self):
         return self.name
 
@@ -26,5 +27,3 @@ class Event(models.Model):
     # photos = models.ForeignKey(Photos, null=True)
     # documents = models.ForeignKey(Documents, null=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-
-

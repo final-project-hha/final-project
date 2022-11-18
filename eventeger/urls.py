@@ -20,7 +20,7 @@ from rest_framework import routers
 import users.views
 
 router = routers.DefaultRouter()
-router.register(r'Members', users.views.MemberViewSet)
+router.register(r'members', users.views.MemberViewSet)
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),

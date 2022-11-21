@@ -15,8 +15,3 @@ class Profile(models.Model):
     about_me = models.TextField()
     settings = models.JSONField()
     member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="profile")
-
-
-
-
-

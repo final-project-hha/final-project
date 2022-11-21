@@ -30,9 +30,3 @@ class MemberViewSet(ModelViewSet):
                 return Response(member.id)
 
         return Response('/error')
-
-
-
-
-
-

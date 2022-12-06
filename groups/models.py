@@ -1,3 +1,5 @@
+from datetime import timezone
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -6,15 +8,19 @@ from photos.models import Photos
 from users.models import Member
 
 
+def return_admin():
+    return [g.id for g in GroupMembers.objects.filter(role='AD')]
+
+
 class Group(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING) # only after the import, it will check the name that's in quotes
+    created_by = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=100)
     password = models.CharField(max_length=150)
     description = models.TextField(blank=True)
     photo = models.ForeignKey(Photos, null=True, on_delete=models.DO_NOTHING)
     # document = models.ForeignKey(Documents, null=True)
-    admins = models.ManyToManyField('users.Member', through='GroupMembers')# todo delition
+    # admins = models.ManyToManyField('users.Member', through='GroupMembers', default=return_admin)
 
     def __str__(self):
         return self.name
@@ -46,3 +52,4 @@ class GroupMembers(models.Model):
 
     def __str__(self):
         return f'{self.member.first_name} - {self.group.name} - {self.role}'
+

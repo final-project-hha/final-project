@@ -8,13 +8,15 @@ class CounterMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        counter = Counter.objects.get(pk=4)
-        # Code to be executed for each request before
+        counter = Counter.objects.first()
+        # Code to be executed before each request
+        if not counter:
+            counter = Counter.objects.create(name="Members-counter")
 
         response = self.get_response(request)
         if request.path == '/api/v1/members/':
             counter.counter += 1
             counter.save()
-        # Code to be executed for each request/response after
+        # Code to be executed after each request/response
 
         return response

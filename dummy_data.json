@@ -1,0 +1,14 @@
+[
+{
+    "model": "users.member",
+    "pk": 1,
+    "fields": {
+        "first_name": "Hila",
+        "last_name": "Bit",
+        "email": "hila@bit.com",
+        "password": "nice",
+        "django_user": 1
+    }
+}
+]
+

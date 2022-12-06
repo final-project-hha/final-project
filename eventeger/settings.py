@@ -37,12 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'users',
     'groups',
     'photos',
     'documents',
-    'rest_framework',
     'analytics',
+    'django_extensions',
+    'django_seed',
 ]
 
 MIDDLEWARE = [
@@ -53,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'analytics.middleware.CounterMiddleware',
+    'analytics.middleware.CounterMiddleware',
 ]
 
 ROOT_URLCONF = 'eventeger.urls'
@@ -83,12 +85,13 @@ WSGI_APPLICATION = 'eventeger.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'eventeger_db',
+        'NAME': 'eventeger',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
-        'PORT': '2022',
-    }
+        'PASSWORD': 'Eventeger1234',
+        'HOST': '35.242.242.218',
+        'PORT': '5432',
+    },
+
 }
 
 
@@ -132,3 +135,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

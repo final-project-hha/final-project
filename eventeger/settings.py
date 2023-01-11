@@ -39,12 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'users',
-    'groups',
-    'photos',
-    'documents',
-    'analytics',
-    'django_extensions',
-    'django_seed',
 ]
 
 MIDDLEWARE = [
@@ -85,11 +79,11 @@ WSGI_APPLICATION = 'eventeger.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'eventeger',
+        'NAME': 'eventeger_db',
         'USER': 'postgres',
-        'PASSWORD': 'Eventeger1234',
-        'HOST': '35.242.242.218',
-        'PORT': '5432',
+        'PASSWORD': 'postgres',
+        'HOST': '127.0.0.1',
+        'PORT': '2022',
     },
 
 }
@@ -136,3 +130,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+AUTH_USER_MODEL = 'users.User'

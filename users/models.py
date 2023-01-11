@@ -1,17 +1,31 @@
-from django.contrib.auth.models import User
+"""
+User models
+"""
+from django.contrib.auth.models import (AbstractBaseUser,
+                                        PermissionsMixin,
+                                        BaseUserManager,
+                                        )
 from django.db import models
 
 
-class Member(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=100)
-    password = models.CharField(max_length=150)
-    django_user = models.OneToOneField(User, on_delete=models.CASCADE)
+class UserManager(BaseUserManager):
+    """Manager for Users."""
+    def create_user(self, email, password=None, **extra_fields):
+        """Create , save and return user."""
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
 
 
-class Profile(models.Model):
-    avatar = models.URLField()
-    about_me = models.TextField()
-    settings = models.JSONField()
-    member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="profile")
+class User(AbstractBaseUser, PermissionsMixin):
+    """User in the system"""
+    email = models.EmailField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'

@@ -68,3 +68,60 @@ class PublicUserAPITests(TestCase):
         self.assertIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
+    def test_create_token_bad_credentials(self):
+        """Test return error if credentials invalid."""
+        create_user(email='test@example', password='goodpass123')
+
+        payload['password'] = 'badpass'
+        res = self.client.post('/api/token/', payload)
+
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_token_blank_password_ERROR(self):
+        """Test posting a blank password return an error."""
+        payload['password'] = ''
+        res = self.client.post('/api/token/', payload)
+
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_user_unauthorized(self):
+        """Test authentication os required for users."""
+        res = self.client.get('/api/me/')
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class AuthenticatedAPITest(TestCase):
+    """Test APi request that require authentication."""
+    def setUp(self):
+        self.user = create_user(**payload)
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_retrieve_my_data_success(self):
+        """Test retrieving user data for logged in user."""
+        res = self.client.get('/api/me/')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, {
+            'name': self.user.name,
+            'email': self.user.email,
+        })
+
+    def test_post_me_not_allowed(self):
+        """Test POST is not allowed for the endpoint."""
+        res = self.client.post('/api/me/', {'some': 'hallo'})
+
+        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_update_user_data(self):
+        """Test upddating the user data dor the authenticated user."""
+        payload = {'name': 'Updated name', 'password': 'newpass123'}
+
+        res = self.client.patch('/api/me/', payload)
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.name, payload['name'])
+        self.assertTrue(self.user.check_password(payload['password']))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)

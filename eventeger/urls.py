@@ -17,14 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-import users.views
+from users import views
 
-router = routers.DefaultRouter()
-router.register('users', users.views.CreateUserView)
 
 urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls))
-
+    path('api/users/', views.CreateUserView.as_view(), name='create'),
+    path('api/token/', views.CreateTokenView.as_view(), name='token'),
 ]

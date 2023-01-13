@@ -21,3 +21,12 @@ class Group(models.Model):
 
     def __str__(self):
         return self.group_name
+
+
+class Admin(models.Model):
+    """Admin model"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.DO_NOTHING,
+    )
+    groups = models.ManyToManyField(Group, related_name="admin")

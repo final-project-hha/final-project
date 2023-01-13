@@ -30,4 +30,4 @@ jobs:
           coverage report --fail-under 90
       - name: Coding Style
         run: |
-          flake8 --exclude */migrations*
+          flake8 --exclude */migrations/*

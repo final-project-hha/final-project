@@ -16,7 +16,8 @@ class Group(models.Model):
     created_by = models.CharField(max_length=255)
     group_name = models.CharField(max_length=255)
     description = models.TextField()
-    created_on = models.DateTimeField(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%m'))
+    created_on = models.DateTimeField(
+        default=datetime.datetime.now().strftime('%Y-%m-%d %H:%m'))
 
     def __str__(self):
         return self.group_name

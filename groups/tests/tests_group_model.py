@@ -27,4 +27,5 @@ class GroupModelTests(TestCase):
             description='Sample description.',
         )
         self.assertEqual(str(group), group.group_name)
-        self.assertEqual(group.created_on, datetime.datetime.now().strftime('%Y-%m-%d %H:%m'))
+        self.assertEqual(group.created_on,
+                         datetime.datetime.now().strftime('%Y-%m-%d %H:%m'))

@@ -17,12 +17,21 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Group',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('created_by', models.CharField(max_length=255)),
                 ('group_name', models.CharField(max_length=255)),
                 ('description', models.TextField()),
-                ('created_on', models.DateTimeField(default='2023-01-13 09:01')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
+                ('created_on', models.DateTimeField(
+                    default='2023-01-13 09:01'
+                )),
+                ('user', models.ForeignKey(
+                    on_delete=django.db.models.deletion.DO_NOTHING,
+                    to=settings.AUTH_USER_MODEL
+                )),
             ],
         ),
     ]

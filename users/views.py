@@ -1,14 +1,24 @@
 """View for the User API"""
+from django.contrib.auth import get_user_model
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 
 from users.serializers import UserSerializer, AuthTokenSerializer
+from rest_framework import mixins, viewsets
 
 
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system"""
     serializer_class = UserSerializer
+
+
+class ListUsersView(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """List all users in the database"""
+    serializer_class = UserSerializer
+    queryset = get_user_model().objects.all()
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class CreateTokenView(ObtainAuthToken):

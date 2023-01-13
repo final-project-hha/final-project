@@ -7,6 +7,8 @@ from rest_framework import status
 
 from rest_framework.test import APIClient
 
+from users.serializers import UserSerializer
+
 payload = {
             'email': 'test@example.com',
             'password': 'testpass123',
@@ -91,6 +93,18 @@ class PublicUserAPITests(TestCase):
         res = self.client.get('/api/me/')
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_unauthorized_cannot_retrieve_list_of_user(self):
+        """Test non-authenticated user return error"""
+        create_user(email='user2@example.com', password='passworduser2')
+        create_user(email='user3@example.com', password='passworduser3')
+
+        res = self.client.get('/api/get_users/')
+        users = get_user_model().objects.all()
+        serializer = UserSerializer(users, many=True)
+
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertNotEqual(res.data, serializer.data)
+
 
 class AuthenticatedAPITest(TestCase):
     """Test APi request that require authentication."""
@@ -125,3 +139,16 @@ class AuthenticatedAPITest(TestCase):
         self.assertEqual(self.user.name, payload['name'])
         self.assertTrue(self.user.check_password(payload['password']))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_retrieve_list_of_users(self):
+        """Test authenticated user can retrieve list of users"""
+        create_user(email='user2@example.com', password='passworduser2')
+        create_user(email='user3@example.com', password='passworduser3')
+
+        res = self.client.get('/api/get_users/')
+
+        users = get_user_model().objects.all()
+        serializer = UserSerializer(users, many=True)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)

@@ -18,6 +18,7 @@ class Group(models.Model):
     description = models.TextField()
     created_on = models.DateTimeField(
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%m'))
+    admins = models.ManyToManyField('Admin')
 
     def __str__(self):
         return self.group_name

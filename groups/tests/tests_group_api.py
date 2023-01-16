@@ -35,7 +35,7 @@ class PublicGroupApi(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_authentication_required_401_ERrOR(self):
+    def test_authentication_required_401_UNAUTHORIZED(self):
         """Test authentication is required to call group API."""
         res = self.client.get('/api/groups/')
 

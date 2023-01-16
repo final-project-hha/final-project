@@ -19,11 +19,11 @@ class GroupViewSet(mixins.CreateModelMixin,
     permission_classes = [IsAuthenticated]
 
 
-class GroupDetailsViewSet(mixins.ListModelMixin,
-                          viewsets.GenericViewSet):
-    """View for manage the details of a group in the API"""
-    serializer_class = GroupSerializer
-    queryset = Group.objects.all()
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+# class GroupDetailsViewSet(mixins.ListModelMixin,
+#                           viewsets.GenericViewSet):
+#     """View for manage the details of a group in the API"""
+#     serializer_class = GroupSerializer
+#     queryset = Group.objects.all()
+#     authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
 

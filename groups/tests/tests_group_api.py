@@ -64,9 +64,20 @@ class PrivateGroupApi(TestCase):
             self.assertEqual(getattr(group, k), v)
         self.assertEqual(group.user, self.user)
 
-    def test_creating_a_group_set_the_creator_user_as_admin(self):
-        """Test creating a group set the creator
-            user as admin and created_by."""
+    def test_authenticated_user_can_create_a_group(self):
+        """Test user can create a group."""
+        payload = {
+            'group_name': 'Test group name',
+            'description': 'Sample group description',
+        }
+        res = self.client.post('/api/groups/', payload)
+
+        group = models.Group.objects.get(pk=1)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data['group_name'], group.group_name)
+
+    def test_user_creator_set_as_an_admin(self):
+        """Test user can create a group."""
         payload = {
             'group_name': 'Test group name',
             'description': 'Sample group description',
@@ -75,6 +86,22 @@ class PrivateGroupApi(TestCase):
 
         group = models.Group.objects.get(id=res.data['id'])
         admin = group.admins.get(pk=1)
+
         self.assertEqual(self.user, admin.user)
         self.assertEqual(group, admin.groups.get(pk=1))
         self.assertEqual(res.data['created_by'], self.user.email)
+
+    def test_group_was_added_to_admin(self):
+        """Test create a group add a group id
+            in the admin instance."""
+        payload = {
+            'group_name': 'Test group name',
+            'description': 'Sample group description',
+        }
+        res = self.client.post('/api/groups/', payload)
+
+        group = models.Group.objects.get(user=self.user)
+        admin = models.Admin.objects.get(user=self.user)
+        groups_in_admin = admin.groups.all()
+        self.assertIn(admin.pk, res.data['admins'])
+        self.assertEqual(groups_in_admin[0], group)

@@ -18,7 +18,7 @@ class Group(models.Model):
     description = models.TextField()
     created_on = models.DateTimeField(
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%m'))
-    admins = models.ManyToManyField('Admin')
+    admins = models.ManyToManyField('Admin', related_name="groups")
 
     def __str__(self):
         return self.group_name
@@ -30,4 +30,3 @@ class Admin(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.DO_NOTHING,
     )
-    groups = models.ManyToManyField(Group, related_name="admin")

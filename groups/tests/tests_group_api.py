@@ -105,3 +105,52 @@ class PrivateGroupApi(TestCase):
         groups_in_admin = admin.groups.all()
         self.assertIn(admin.pk, res.data['admins'])
         self.assertEqual(groups_in_admin[0], group)
+
+    def test_user_can_get_list_of_groups(self):
+        """Test Auth user can get a list of groups."""
+        create_group(user=self.user)
+        create_group(user=self.user, group_name='Sample Group2')
+
+        res = self.client.get('/api/groups/')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertTrue(len(res.data), 2)
+
+    def test_retrieve_a_specific_group_by_id(self):
+        """Test get a specific group by id."""
+        create_group(user=self.user)
+        create_group(user=self.user, group_name='Sample Group2')
+
+        res = self.client.get('/api/groups/1/')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['id'], 1)
+
+    def test_deleting_a_group_204_NO_CONTENT(self):
+        """Test user can delete a specific group."""
+        create_group(user=self.user)
+        create_group(user=self.user, group_name='Sample Group2')
+
+        groups = models.Group.objects.filter(user=self.user)
+        res = self.client.delete('/api/groups/1/')
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(groups), 1)
+
+    def test_delete_group_by_admin_of_the_group(self):
+        """Test only admins of a group can delete it."""
+        create_group(user=self.user)
+        user2 = create_user(
+            email='testuser1@example',
+            password='testpass123',
+            name='Test User',
+        )
+        unauthorized_client = APIClient()
+        unauthorized_client.force_authenticate(user2)
+        create_group(user=user2, group_name='Sample Group2')
+        group = models.Group.objects.filter(id=1)
+
+        res = unauthorized_client.delete('/api/groups/1/')
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(group.exists())

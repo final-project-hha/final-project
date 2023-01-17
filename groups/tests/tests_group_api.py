@@ -3,13 +3,11 @@ Tests for group API
 """
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.urls import reverse
 
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from groups import models
-from groups.serializers import GroupSerializer
 
 
 def create_user(**params):
@@ -46,7 +44,10 @@ class PrivateGroupApi(TestCase):
     """Test Authenticated API requests."""
     def setUp(self):
         self.client = APIClient()
-        self.user = create_user(email='user@example.com', password='testpass123')
+        self.user = create_user(
+            email='user@example.com',
+            password='testpass123',
+        )
         self.client.force_authenticate(self.user)
 
     def test_creating_a_group_201_CREATED(self):
@@ -64,7 +65,8 @@ class PrivateGroupApi(TestCase):
         self.assertEqual(group.user, self.user)
 
     def test_creating_a_group_set_the_creator_user_as_admin(self):
-        """Test creating a group set the creator user as admin and created_by."""
+        """Test creating a group set the creator
+            user as admin and created_by."""
         payload = {
             'group_name': 'Test group name',
             'description': 'Sample group description',
@@ -76,26 +78,3 @@ class PrivateGroupApi(TestCase):
         self.assertEqual(self.user, admin.user)
         self.assertEqual(group, admin.groups.get(pk=1))
         self.assertEqual(res.data['created_by'], self.user.email)
-
-    # def test_get_group_details(self):
-    #     """Test get group details."""
-    #     group = create_group(user=self.user)
-    #
-    #     res = self.client.get(f'^groups/{group.id}/$')
-    #
-    #     serializer = GroupSerializer(group)
-    #     self.assertEqual(res, serializer.data)
-
-
-    # def test_admin_of_a_group_can_delete_a_group(self):
-    #     """Test admin can destroy a group."""
-    #     payload = {
-    #         'group_name': 'Test group name',
-    #         'description': 'Sample group description',
-    #     }
-    #     group = create_group(user=self.user, **payload)
-    #
-    #     res = self.client.delete('/api/groups/', args=1)
-    #
-    #     self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-    #     self.assertFalse(group.exists())

@@ -11,7 +11,8 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = [
-            'id', 'group_name', 'created_by', 'created_on', 'description', 'admins',
+            'id', 'group_name', 'created_by', 'created_on',
+            'description', 'admins',
         ]
         read_only_fields = [
             'id', 'created_by', 'created_on', 'admins',
@@ -28,4 +29,3 @@ class GroupSerializer(serializers.ModelSerializer):
         admin.groups.set([group.pk])
         group.admins.set([admin.user.pk])
         return group
-

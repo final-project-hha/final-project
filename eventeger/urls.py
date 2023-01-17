@@ -18,11 +18,10 @@ from django.urls import path, include
 from rest_framework import routers
 
 from users import views
-from groups.views import GroupViewSet, GroupDetailsViewSet
+from groups.views import GroupViewSet
 
 router = routers.DefaultRouter()
 router.register('groups', GroupViewSet)
-# router.register('^groups/{pk}/$', GroupDetailsViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),

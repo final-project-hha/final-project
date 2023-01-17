@@ -21,7 +21,10 @@ from users import views
 from groups.views import GroupViewSet
 
 router = routers.DefaultRouter()
+
 router.register('groups', GroupViewSet)
+router.register('get_users', views.ListUsersView)
+
 
 urlpatterns = [
     path('api/', include(router.urls)),

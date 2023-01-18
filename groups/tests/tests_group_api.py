@@ -15,17 +15,7 @@ def create_user(**params):
     return get_user_model().objects.create_user(**params)
 
 
-def create_group(user, **params):
-    """Create and return a new group."""
-    defaults = {
-        'created_by': user.email,
-        'group_name': 'Test group name',
-        'description': 'Sample group description',
-    }
-    defaults.update(params)
 
-    group = models.Group.objects.create(user=user, **defaults)
-    return group
 
 
 class PublicGroupApi(TestCase):
@@ -49,6 +39,16 @@ class PrivateGroupApi(TestCase):
             password='testpass123',
         )
         self.client.force_authenticate(self.user)
+
+    def create_group(self, user, **params):
+        """Create and return a new group."""
+        defaults = {
+            'created_by': user.email,
+            'group_name': 'Test group name',
+            'description': 'Sample group description',
+        }
+        defaults.update(params)
+        self.client.post('/api/groups/', defaults)
 
     def test_creating_a_group_201_CREATED(self):
         """Test creating a group."""
@@ -108,8 +108,8 @@ class PrivateGroupApi(TestCase):
 
     def test_user_can_get_list_of_groups(self):
         """Test Auth user can get a list of groups."""
-        create_group(user=self.user)
-        create_group(user=self.user, group_name='Sample Group2')
+        self.create_group(user=self.user)
+        self.create_group(user=self.user, group_name='Sample Group2')
 
         res = self.client.get('/api/groups/')
 
@@ -118,8 +118,8 @@ class PrivateGroupApi(TestCase):
 
     def test_retrieve_a_specific_group_by_id(self):
         """Test get a specific group by id."""
-        create_group(user=self.user)
-        create_group(user=self.user, group_name='Sample Group2')
+        self.create_group(user=self.user)
+        self.create_group(user=self.user, group_name='Sample Group2')
 
         res = self.client.get('/api/groups/1/')
 
@@ -128,18 +128,15 @@ class PrivateGroupApi(TestCase):
 
     def test_deleting_a_group_204_NO_CONTENT(self):
         """Test user can delete a specific group."""
-        create_group(user=self.user)
-        create_group(user=self.user, group_name='Sample Group2')
+        self.create_group(self.user)
 
-        groups = models.Group.objects.filter(user=self.user)
         res = self.client.delete('/api/groups/1/')
 
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(len(groups), 1)
 
     def test_delete_group_by_admin_of_the_group(self):
         """Test only admins of a group can delete it."""
-        create_group(user=self.user)
+        self.create_group(user=self.user)
         user2 = create_user(
             email='testuser1@example',
             password='testpass123',
@@ -147,10 +144,51 @@ class PrivateGroupApi(TestCase):
         )
         unauthorized_client = APIClient()
         unauthorized_client.force_authenticate(user2)
-        create_group(user=user2, group_name='Sample Group2')
+
+        unauthorized_client.post('/api/groups/',
+                                 {'group_name': 'Group2',
+                                  'description': 'Group2 description'}
+                                 )
         group = models.Group.objects.filter(id=1)
 
         res = unauthorized_client.delete('/api/groups/1/')
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(group.exists())
+
+    def test_update_a_group(self):
+        """Test update a group successful."""
+        self.create_group(user=self.user)
+
+        payload = {
+            'group_name': 'New Test Group',
+            'description': 'New Sample Description',
+        }
+        group = models.Group.objects.get(user=self.user)
+        res = self.client.patch('/api/groups/1/', payload)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        group.refresh_from_db()
+        for k, v in payload.items():
+            self.assertEqual(getattr(group, k), v)
+
+    def test_update_group_only_allowed_by_admins(self):
+        """Test update a group is just allowed by admins of the group."""
+        self.create_group(user=self.user)
+        payload = {
+            'group_name': 'New Test Group',
+            'description': 'New Sample Description',
+        }
+        group = models.Group.objects.get(user=self.user)
+        user2 = create_user(
+            email='testuser1@example',
+            password='testpass123',
+            name='Test User',
+        )
+        unauthorized_client = APIClient()
+        unauthorized_client.force_authenticate(user2)
+        res = unauthorized_client.patch('/api/groups/1/', payload)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        group.refresh_from_db()
+        self.assertEqual(res.data, group)

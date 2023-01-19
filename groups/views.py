@@ -32,3 +32,18 @@ class GroupViewSet(viewsets.ModelViewSet):
 
         except Admin.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def update(self, request, *args, **kwargs):
+        """Manage updating of the groups by admins in a group."""
+        user = request.user
+        group = self.get_object()
+        try:
+            admin = Admin.objects.get(user=user)
+            if group.admins.contains(admin):
+                super().update(request)
+                return Response(status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+
+        except Admin.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)

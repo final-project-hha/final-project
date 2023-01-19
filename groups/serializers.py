@@ -18,14 +18,16 @@ class GroupSerializer(serializers.ModelSerializer):
             'id', 'created_by', 'created_on', 'admins',
         ]
 
+    def _set_creator_of_group_as_admin(self, user, group):
+        admin = Admin.objects.create(user=user)
+        group.admins.add(admin)
+
     def create(self, validated_data):
-        """Create group."""
+        """Create group and turn creator to admin"""
         user = self.context['request'].user
         group = Group.objects.create(user=user,
                                      created_by=user.email,
                                      **validated_data)
 
-        admin = Admin.objects.create(user=user)
-        admin.groups.set([group.pk])
-        group.admins.set([admin.user.pk])
+        self._set_creator_of_group_as_admin(user, group)
         return group

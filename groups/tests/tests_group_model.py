@@ -29,6 +29,7 @@ class GroupModelTests(TestCase):
         self.assertEqual(str(group), group.group_name)
         self.assertEqual(group.created_on,
                          datetime.datetime.now().strftime('%Y-%m-%d %H:%m'))
+        self.assertEqual(group.members.count(), 0)
 
 
 class AdminModelTests(TestCase):
@@ -48,7 +49,7 @@ class AdminModelTests(TestCase):
             user=self.user,
         )
 
-        admin.groups.set([self.group.pk])
-        group1 = admin.groups.get(pk=1)
+        admin.group_admin.set([self.group.pk])
+        group1 = admin.group_admin.get(pk=1)
         self.assertEqual(group1.group_name, self.group.group_name)
-        self.assertEqual(admin.groups.count(), 1)
+        self.assertEqual(admin.group_admin.count(), 1)

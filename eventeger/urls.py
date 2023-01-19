@@ -26,6 +26,7 @@ router.register('groups', GroupViewSet)
 router.register('get_users', views.ListUsersView)
 
 
+
 urlpatterns = [
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),

@@ -15,9 +15,6 @@ def create_user(**params):
     return get_user_model().objects.create_user(**params)
 
 
-
-
-
 class PublicGroupApi(TestCase):
     """Test unauthenticated API requests."""
     def setUp(self):
@@ -187,8 +184,10 @@ class PrivateGroupApi(TestCase):
         for k, v in payload.items():
             self.assertEqual(getattr(group, k), v)
 
-    # def test_error_404_if_user_is_not_admin_and_user_want_to_patch_a_group(self):
-    #     """Test error 404 is user is not an admin of a group and want to patch a group."""
+    # def test_error_404_if_user_is_
+    # not_admin_and_user_want_to_patch_a_group(self):
+    #     """Test error 404 is user is not an admin
+    #     of a group and want to patch a group."""
     #     self.create_group(user=self.user)
     #     user2 = create_user(
     #         email='testuser1@example',
@@ -223,7 +222,8 @@ class PrivateGroupApi(TestCase):
         )
         unauthorized_client = APIClient()
         unauthorized_client.force_authenticate(user2)
-        # Making user two an admin to make sure only admin of this group can update
+        # Making user two an admin to make
+        # sure only admin of this group can update
         unauthorized_client.post('/api/groups/', {'group_name': 'group two',
                                                   'description': 'group two'})
         res = unauthorized_client.patch('/api/groups/1/', payload)

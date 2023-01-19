@@ -17,7 +17,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='group',
             name='admins',
-            field=models.ManyToManyField(related_name='groups', to='groups.admin'),
+            field=models.ManyToManyField(
+                related_name='groups',
+                to='groups.admin'
+            ),
         ),
         migrations.AlterField(
             model_name='group',

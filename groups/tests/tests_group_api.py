@@ -153,21 +153,6 @@ class PrivateGroupApi(TestCase):
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(group.exists())
 
-    # def test_error_404_if_user_is_not_admin_and_want_to_delete_a_group(self):
-    #     """Test error 404 is user is not an admin of a group."""
-    #     self.create_group(user=self.user)
-    #     user2 = create_user(
-    #         email='testuser1@example',
-    #         password='testpass123',
-    #         name='Test User',
-    #     )
-    #     unauthorized_client = APIClient()
-    #     unauthorized_client.force_authenticate(user2)
-    #
-    #     res = unauthorized_client.delete('/api/groups/1/')
-    #
-    #     self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
-
     def test_update_a_group(self):
         """Test update a group successful."""
         self.create_group(user=self.user)
@@ -183,28 +168,6 @@ class PrivateGroupApi(TestCase):
         group.refresh_from_db()
         for k, v in payload.items():
             self.assertEqual(getattr(group, k), v)
-
-    # def test_error_404_if_user_is_
-    # not_admin_and_user_want_to_patch_a_group(self):
-    #     """Test error 404 is user is not an admin
-    #     of a group and want to patch a group."""
-    #     self.create_group(user=self.user)
-    #     user2 = create_user(
-    #         email='testuser1@example',
-    #         password='testpass123',
-    #         name='Test User',
-    #     )
-    #     payload = {
-    #         'group_name': 'New Test Group',
-    #         'description': 'New Sample Description',
-    #     }
-    #
-    #     unauthorized_client = APIClient()
-    #     unauthorized_client.force_authenticate(user2)
-    #
-    #     res = unauthorized_client.patch('/api/groups/1/', payload)
-    #
-    #     self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_group_only_allowed_by_admins(self):
         """Test update a group is just allowed by admins of the group."""

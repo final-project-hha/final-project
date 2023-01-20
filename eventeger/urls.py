@@ -18,13 +18,12 @@ from django.urls import path, include
 from rest_framework import routers
 
 from users import views
-from groups.views import GroupViewSet
+from groups.views import GroupViewSet, MembersAPIView
 
 router = routers.DefaultRouter()
 
 router.register('groups', GroupViewSet)
 router.register('get_users', views.ListUsersView)
-
 
 
 urlpatterns = [
@@ -34,4 +33,7 @@ urlpatterns = [
     path('api/users/', views.CreateUserView.as_view(), name='create'),
     path('api/token/', views.CreateTokenView.as_view(), name='token'),
     path('api/me/', views.ManageUserView.as_view(), name='me'),
+    path('api/groups/<int:group_id>/add_member/users/<int:user_id>/', MembersAPIView.as_view(), name='add_member'),
+    path('api/groups/<int:group_id>/members/', MembersAPIView.as_view(), name='members')
 ]
+

@@ -102,7 +102,7 @@ class PrivateGroupApi(TestCase):
         group = models.Group.objects.get(user=self.user)
         admin = models.Admin.objects.get(user=self.user)
         groups_in_admin = admin.group_admin.all()
-        self.assertIn(admin.pk, res.data['admins'])
+        self.assertIn(admin.id, res.data['admins'][0].values())
         self.assertEqual(groups_in_admin[0], group)
 
     def test_user_can_get_list_of_groups(self):

@@ -7,9 +7,20 @@ from groups.models import Group, Admin
 from users.serializers import UserSerializer
 
 
+class AdminSerializer(serializers.ModelSerializer):
+    """Serializer for the admin in a group"""
+    user = UserSerializer()
+
+    class Meta:
+        model = Admin
+        fields = '__all__'
+
+
 class GroupSerializer(serializers.ModelSerializer):
     """Serializer for the groups."""
     members = UserSerializer(many=True, required=False)
+    admins = AdminSerializer(many=True, required=False)
+
 
     class Meta:
         model = Group

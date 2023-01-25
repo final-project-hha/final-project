@@ -21,7 +21,6 @@ class GroupSerializer(serializers.ModelSerializer):
     members = UserSerializer(many=True, required=False)
     admins = AdminSerializer(many=True, required=False)
 
-
     class Meta:
         model = Group
         fields = [
@@ -45,5 +44,3 @@ class GroupSerializer(serializers.ModelSerializer):
 
         self._set_creator_of_group_as_admin(user, group)
         return group
-
-

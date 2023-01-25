@@ -10,9 +10,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import users
-from groups.serializers import GroupSerializer, AdminSerializer
+from groups.serializers import GroupSerializer
 from groups.models import Group, Admin
-from users.serializers import UserSerializer
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -86,6 +85,7 @@ class MembersAPIView(APIView):
                 "admins": admins},
                 status=status.HTTP_200_OK)
 
+
 class MemberDetailsAPIView(APIView):
     """
     View for deletion and update of members of a group
@@ -125,7 +125,7 @@ class MemberDetailsAPIView(APIView):
                 admin = Admin.objects.get(user_id=user_id)
                 group.members.add(user)
                 group.admins.remove(admin)
-                Admin.objects.delete(user=user)
+                Admin.objects.filter(user=user).delete()
 
         else:
             with transaction.atomic():
@@ -134,12 +134,3 @@ class MemberDetailsAPIView(APIView):
                 group.admins.add(admin)
 
         return Response(status=status.HTTP_200_OK)
-
-
-
-
-
-
-
-
-

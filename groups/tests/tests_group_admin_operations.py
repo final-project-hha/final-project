@@ -9,6 +9,7 @@ from rest_framework.test import APIClient
 
 from groups import models
 
+
 def create_user(**params):
     """Create and return a new user"""
     return get_user_model().objects.create_user(**params)
@@ -18,7 +19,8 @@ class TestGroupAdmin(TestCase):
     """Tests group management by admin"""
 
     def setUp(self):
-        #______Creating a first user, who creates a group and becomes Admin_____
+        # ______Creating a first user,
+        # who creates a group and becomes Admin_____
         self.user = create_user(
             email='user@example.com',
             password='testpass123'
@@ -35,7 +37,7 @@ class TestGroupAdmin(TestCase):
         self.client.post('/api/groups/', defaults)
         self.group = models.Group.objects.get(user=self.user)
 
-        #_______Creating a second user, not admin______________
+        # _______Creating a second user, not admin______________
 
         self.user2 = create_user(
             email='user2@example.com',
@@ -55,7 +57,8 @@ class TestGroupAdmin(TestCase):
     def test_only_admin_can_add_members_to_that_group(self):
         """Tests only admin of the group can add members to it"""
 
-        res = self.unauthorized_client.post('/api/groups/1/add_member/users/2/')
+        res = self.unauthorized_client.post(
+            '/api/groups/1/add_member/users/2/')
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
         self.assertFalse(self.group.members.contains(self.user2))
@@ -130,13 +133,3 @@ class TestGroupAdmin(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         is_member = self.group.members.filter(id=self.user2.id)
         self.assertTrue(is_member)
-
-
-
-
-
-
-
-
-
-

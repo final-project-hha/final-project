@@ -19,8 +19,10 @@ class Group(models.Model):
     description = models.TextField()
     created_on = models.DateTimeField(
         default=datetime.datetime.now().strftime('%Y-%m-%d %H:%m'))
-    admins = models.ManyToManyField('Admin', related_name="group_admin")
-    members = models.ManyToManyField(get_user_model(), related_name="group_member")
+    admins = models.ManyToManyField('Admin',
+                                    related_name="group_admin")
+    members = models.ManyToManyField(get_user_model(),
+                                     related_name="group_member")
 
     def __str__(self):
         return self.group_name
@@ -32,6 +34,3 @@ class Admin(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.DO_NOTHING,
     )
-
-
-

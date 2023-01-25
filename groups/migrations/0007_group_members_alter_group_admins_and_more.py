@@ -15,12 +15,14 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='group',
             name='members',
-            field=models.ManyToManyField(related_name='group_member', to=settings.AUTH_USER_MODEL),
+            field=models.ManyToManyField(related_name='group_member',
+                                         to=settings.AUTH_USER_MODEL),
         ),
         migrations.AlterField(
             model_name='group',
             name='admins',
-            field=models.ManyToManyField(related_name='group_admin', to='groups.admin'),
+            field=models.ManyToManyField(related_name='group_admin',
+                                         to='groups.admin'),
         ),
         migrations.AlterField(
             model_name='group',

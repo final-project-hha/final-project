@@ -15,7 +15,7 @@ from groups.models import Group, Admin
 
 
 class GroupViewSet(viewsets.ModelViewSet):
-    """View for manage creation of groups API."""
+    """View for management of groups API."""
     serializer_class = GroupSerializer
     queryset = Group.objects.all()
     authentication_classes = [TokenAuthentication]

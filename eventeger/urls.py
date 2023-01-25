@@ -19,11 +19,14 @@ from rest_framework import routers
 
 from users import views
 from groups.views import GroupViewSet, MembersAPIView, MemberDetailsAPIView
+from events.views import EventAPIViewSet, EventAPIView
+
 
 router = routers.DefaultRouter()
 
 router.register('groups', GroupViewSet)
 router.register('get_users', views.ListUsersView)
+router.register('group/events', EventAPIViewSet)
 
 
 urlpatterns = [
@@ -39,4 +42,6 @@ urlpatterns = [
          MembersAPIView.as_view(), name='members'),
     path('api/groups/<int:group_id>/members/<int:user_id>/',
          MemberDetailsAPIView.as_view(), name='member_details'),
+    path('api/group/<int:group_id>/add_event/',
+         EventAPIView.as_view(), name='add_event')
 ]

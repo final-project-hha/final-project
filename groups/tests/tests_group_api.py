@@ -26,6 +26,8 @@ class PublicGroupApi(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
+# ________AUTHENTICATED USERS________
+
 
 class PrivateGroupApi(TestCase):
     """Test Authenticated API requests."""
@@ -85,7 +87,7 @@ class PrivateGroupApi(TestCase):
         admin = group.admins.get(pk=1)
 
         self.assertEqual(self.user, admin.user)
-        self.assertEqual(group, admin.groups.get(pk=1))
+        self.assertEqual(group, admin.group_admin.get(pk=1))
         self.assertEqual(res.data['created_by'], self.user.email)
 
     def test_group_was_added_to_admin(self):
@@ -99,8 +101,8 @@ class PrivateGroupApi(TestCase):
 
         group = models.Group.objects.get(user=self.user)
         admin = models.Admin.objects.get(user=self.user)
-        groups_in_admin = admin.groups.all()
-        self.assertIn(admin.pk, res.data['admins'])
+        groups_in_admin = admin.group_admin.all()
+        self.assertIn(admin.id, res.data['admins'][0].values())
         self.assertEqual(groups_in_admin[0], group)
 
     def test_user_can_get_list_of_groups(self):

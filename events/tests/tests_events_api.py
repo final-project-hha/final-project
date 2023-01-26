@@ -172,3 +172,20 @@ class PrivateEventAPI(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_update_details_of_an_specific_event(self):
+        """Test Updating an event successful"""
+        self.create_event()
+        payload = {
+            'name': 'Updated Name',
+            'start_time': '2023-02-22 10:32',
+        }
+        res = self.client.patch('/api/group/1/events/1/event_details/', payload)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        event = Event.objects.get(id=res.data['id'])
+        event.refresh_from_db()
+        self.assertEqual(event.name, payload['name'])
+
+    # def test_only_admins_and_creator_of_the_event_can_delete(self):
+    #     """Test only the admins of the group and creator of
+    #      the event can update the event."""

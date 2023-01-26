@@ -129,7 +129,7 @@ class MemberDetailsAPIView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, group_id, user_id):
-        """Making a member an admin and removing from the members list"""
+        """Making a member and admin removing from the members list"""
         group = Group.objects.get(id=group_id)
         user = get_user_model().objects.get(id=user_id)
 

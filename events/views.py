@@ -1,6 +1,7 @@
 """
 Views for the Event API.
 """
+from django.shortcuts import get_object_or_404
 from rest_framework import mixins, viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
@@ -13,6 +14,8 @@ from rest_framework.views import APIView
 
 from groups.models import Group, Admin
 
+from eventeger.utils import is_member_or_admin, is_admin_or_event_creator
+
 
 class EventAPIViewSet(mixins.ListModelMixin,
                       mixins.RetrieveModelMixin,
@@ -23,22 +26,20 @@ class EventAPIViewSet(mixins.ListModelMixin,
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get', 'patch'])
     def event_details(self, request, group_pk=None, pk=None):
         """Retrieve and manage event by id."""
-        event = self.get_object()
-        group = event.group
-        if request.user in group.members.all():
-            return Response(EventSerializer(event).data)
-        try:
-            group.admins.get(user=request.user)
-        except Admin.DoesNotExist:
+        event = get_object_or_404(Event, pk=pk)
+        if not is_member_or_admin(request.user, event.group):
             return Response(status=status.HTTP_404_NOT_FOUND)
-        else:
+        if request.method == 'GET':
             return Response(EventSerializer(event).data)
-class NameserverViewSet(viewsets.ModelViewSet):
-    def get_queryset(self):
-        return EventAPIViewSet.objects.filter(domain=self.kwargs['domain_pk'])
+        if request.method == 'PATCH':
+            for attr, value in request.data.items():
+                setattr(event, attr, value)
+            event.save()
+            return Response(data=EventSerializer(event).data, status=status.HTTP_200_OK)
+
 
 class EventAPIView(APIView):
     """
@@ -51,7 +52,7 @@ class EventAPIView(APIView):
     def post(self, request, group_id):
         """Create an event with an associated group_id."""
         group = Group.objects.get(id=group_id)
-        if request.user in group.members.all():
+        if is_member_or_admin(request.user, group):
             event = Event.objects.create(
                 group=group,
                 name=request.data['name'],
@@ -65,20 +66,5 @@ class EventAPIView(APIView):
                 data=EventSerializer(event).data,
                 status=status.HTTP_201_CREATED)
         else:
-            try:
-                admin = group.admins.get(user=request.user)
-            except Admin.DoesNotExist:
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
-            if admin:
-                event = Event.objects.create(
-                    group=group,
-                    name=request.data['name'],
-                    description=request.data['description'],
-                    start_time=request.data['start_time'],
-                    end_time=request.data['end_time'],
-                    created_by=request.user,
-                    location=request.data['location']
-                )
-                return Response(
-                    data=EventSerializer(event).data,
-                    status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+

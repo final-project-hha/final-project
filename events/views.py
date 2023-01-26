@@ -3,6 +3,7 @@ Views for the Event API.
 """
 from rest_framework import mixins, viewsets, status
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from events.models import Event
@@ -14,6 +15,7 @@ from groups.models import Group, Admin
 
 
 class EventAPIViewSet(mixins.ListModelMixin,
+                      mixins.RetrieveModelMixin,
                       viewsets.GenericViewSet):
     """View for the management of events."""
     serializer_class = EventSerializer
@@ -21,6 +23,22 @@ class EventAPIViewSet(mixins.ListModelMixin,
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @action(detail=True, methods=['get'])
+    def event_details(self, request, group_pk=None, pk=None):
+        """Retrieve and manage event by id."""
+        event = self.get_object()
+        group = event.group
+        if request.user in group.members.all():
+            return Response(EventSerializer(event).data)
+        try:
+            group.admins.get(user=request.user)
+        except Admin.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(EventSerializer(event).data)
+class NameserverViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        return EventAPIViewSet.objects.filter(domain=self.kwargs['domain_pk'])
 
 class EventAPIView(APIView):
     """

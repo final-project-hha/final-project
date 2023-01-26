@@ -148,3 +148,27 @@ class PrivateEventAPI(TestCase):
         res = unauthorized_client.get('/api/groups/1/events/')
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_retrieving_an_event_by_id(self):
+        """Test retrieve an event details."""
+        self.create_event()
+        self.create_event(**{'name': 'Event2'})
+
+        res = self.client.get('/api/group/1/events/1/event_details/')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['name'], 'Event title')
+
+    def test_retrieving_an_event_by_id_only_for_members_and_admins(self):
+        """Test Only members and admins of a group
+         can get details of a specific event."""
+        self.create_event()
+
+        user2 = create_user(email='user2@example.com', password='testpass123')
+        unauthorized_client = APIClient()
+        unauthorized_client.force_authenticate(user2)
+
+        res = unauthorized_client.get('/api/group/1/events/1/event_details/')
+
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+

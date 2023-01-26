@@ -3,6 +3,7 @@ Views for the API.
 """
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
@@ -55,9 +56,10 @@ class GroupViewSet(viewsets.ModelViewSet):
         except Admin.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=True)
+    @action(detail=True, methods=['get'])
     def events(self, request, pk=None):
-        group = self.get_object()
+        """Listing group events, only for members and admins of the group."""
+        group = get_object_or_404(Group, pk=pk)
         if request.user in group.members.all():
             events = Event.objects.all()
             return Response([EventSerializer(event).data for event in events])
@@ -68,6 +70,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         else:
             events = Event.objects.all()
             return Response([EventSerializer(event).data for event in events])
+
 
 class MembersAPIView(APIView):
     """Add members to group view"""

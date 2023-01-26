@@ -1,8 +1,6 @@
 """
 Views for the Event API.
 """
-from datetime import datetime
-
 from rest_framework import mixins, viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -45,11 +43,15 @@ class EventAPIView(APIView):
                 created_by=request.user,
                 location=request.data['location']
             )
-            return Response(data=EventSerializer(event).data, status=status.HTTP_201_CREATED)
+            return Response(
+                data=EventSerializer(event).data,
+                status=status.HTTP_201_CREATED)
         else:
-            flag = group.admins.filter(user=request.user).exists()
-
-            if flag:
+            try:
+                admin = group.admins.get(user=request.user)
+            except Admin.DoesNotExist:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+            if admin:
                 event = Event.objects.create(
                     group=group,
                     name=request.data['name'],
@@ -59,4 +61,6 @@ class EventAPIView(APIView):
                     created_by=request.user,
                     location=request.data['location']
                 )
-                return Response(data=EventSerializer(event).data, status=status.HTTP_201_CREATED)
+                return Response(
+                    data=EventSerializer(event).data,
+                    status=status.HTTP_201_CREATED)

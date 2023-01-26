@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,6 +13,8 @@ from rest_framework.views import APIView
 import users
 from groups.serializers import GroupSerializer
 from groups.models import Group, Admin
+from events.models import Event
+from events.serializers import EventSerializer
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -52,6 +55,19 @@ class GroupViewSet(viewsets.ModelViewSet):
         except Admin.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+    @action(detail=True)
+    def events(self, request, pk=None):
+        group = self.get_object()
+        if request.user in group.members.all():
+            events = Event.objects.all()
+            return Response([EventSerializer(event).data for event in events])
+        try:
+            Admin.objects.get(user=request.user)
+        except Admin.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            events = Event.objects.all()
+            return Response([EventSerializer(event).data for event in events])
 
 class MembersAPIView(APIView):
     """Add members to group view"""

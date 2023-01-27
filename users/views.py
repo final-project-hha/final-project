@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
-
+from rest_framework.generics import GenericAPIView
 from users.serializers import UserSerializer, AuthTokenSerializer
 from rest_framework import mixins, viewsets
 

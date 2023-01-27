@@ -5,8 +5,11 @@ import datetime
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+# from PIL import Image as PILImage
+from django.core.files import File
 
-from groups.models import Group, Admin
+
+from groups.models import Group, Admin, Image
 
 
 def create_user(email='user@example.com', password='testpass123'):
@@ -53,3 +56,35 @@ class AdminModelTests(TestCase):
         group1 = admin.group_admin.get(pk=1)
         self.assertEqual(group1.group_name, self.group.group_name)
         self.assertEqual(admin.group_admin.count(), 1)
+
+
+class ImageModelTests(TestCase):
+
+    def setUp(self):
+        self.user = create_user()
+        self.group = Group.objects.create(
+            user=self.user,
+            created_by=self.user.email,
+            group_name='first_group',
+            description='this is the first group'
+        )
+
+    def test_create_image(self):
+        with open('media/images/final_project.png', 'rb') as f:
+
+            photo = Image.objects.create(
+                name='final_project.png',
+                image=File(f),
+                group=self.group,
+                created_by=self.user
+            )
+
+            self.assertEqual(len(Image.objects.all()), 1)
+
+
+
+
+
+
+
+

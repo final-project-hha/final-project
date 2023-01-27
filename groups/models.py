@@ -34,3 +34,15 @@ class Admin(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.DO_NOTHING,
     )
+
+
+class Image(models.Model):
+    """Image model"""
+    name = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='images/')
+    created_on = models.DateTimeField(auto_now_add=True)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    description = models.CharField(blank=True, max_length=500)
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)
+
+

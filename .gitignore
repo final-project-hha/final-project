@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 .idea
 ./
+# media folder with images and files
+media/

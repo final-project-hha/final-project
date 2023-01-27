@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
@@ -45,5 +47,5 @@ urlpatterns = [
     path('api/groups/<int:group_id>/members/<int:user_id>/',
          MemberDetailsAPIView.as_view(), name='member_details'),
     path('api/group/<int:group_id>/add_event/',
-         EventAPIView.as_view(), name='add_event')
-]
+         EventAPIView.as_view(), name='add_event'),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

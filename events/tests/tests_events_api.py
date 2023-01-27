@@ -179,13 +179,66 @@ class PrivateEventAPI(TestCase):
             'name': 'Updated Name',
             'start_time': '2023-02-22 10:32',
         }
-        res = self.client.patch('/api/group/1/events/1/event_details/', payload)
+        res = self.client.patch(
+            '/api/group/1/events/1/event_details/', payload
+        )
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         event = Event.objects.get(id=res.data['id'])
         event.refresh_from_db()
         self.assertEqual(event.name, payload['name'])
 
-    # def test_only_admins_and_creator_of_the_event_can_delete(self):
-    #     """Test only the admins of the group and creator of
-    #      the event can update the event."""
+    def test_event_can_be_deleted(self):
+        """Test event can be deleted."""
+        self.create_event()
+
+        res = self.client.delete('/api/group/1/events/1/event_details/')
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        events = Event.objects.all()
+        self.assertEqual(len(events), 0)
+
+    def test_event_can_not_be_deleted_by_any_member(self):
+        """Test event can't be deleted by members."""
+        self.create_event()
+
+        user2 = create_user(email='user2@example.com', password='testpass123')
+        unauthorized_member_client = APIClient()
+        unauthorized_member_client.force_authenticate(user2)
+
+        self.client.post('/api/groups/1/add_member/users/2/')
+
+        res = unauthorized_member_client.delete(
+            '/api/group/1/events/1/event_details/'
+        )
+
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        events = Event.objects.all()
+        self.assertEqual(len(events), 1)
+
+    def test_event_can_be_deleted_by_creator_member(self):
+        """Test event can be deleted by the creator member
+        of the event in the group."""
+
+        user2 = create_user(email='user2@example.com', password='testpass123')
+        creator_member_client = APIClient()
+        creator_member_client.force_authenticate(user2)
+
+        self.client.post('/api/groups/1/add_member/users/2/')
+
+        payload = {
+            'name': 'Event title',
+            'description': 'Sample description event',
+            'start_time': '2023-01-01 10:30',
+            'end_time': '2023-01-01 18:00',
+            'location': 'Reichstag',
+        }
+        creator_member_client.post('/api/group/1/add_event/', payload)
+
+        res = creator_member_client.delete(
+            '/api/group/1/events/1/event_details/'
+        )
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        events = Event.objects.all()
+        self.assertEqual(len(events), 0)

@@ -5,7 +5,6 @@ from rest_framework import serializers
 
 from groups.models import Group, Admin
 from users.serializers import UserSerializer
-from events.serializers import EventSerializer
 
 
 class AdminSerializer(serializers.ModelSerializer):

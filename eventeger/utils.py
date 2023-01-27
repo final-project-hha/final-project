@@ -34,7 +34,7 @@ def is_admin_or_event_creator(user, group, event) -> bool:
     """
     Check if the user is a member or admin of the group return True
     """
-    if user is event.created_by:
+    if user == event.created_by:
         return True
     try:
         group.admins.get(user=user)

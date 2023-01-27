@@ -27,7 +27,8 @@ router = routers.DefaultRouter()
 router.register('groups', GroupViewSet)
 router.register('get_users', views.ListUsersView)
 router.register('events', EventAPIViewSet)
-router.register(r'group/(?P<group_pk>\d+)/events', EventAPIViewSet, basename='event')
+router.register(r'group/(?P<group_pk>\d+)/events',
+                EventAPIViewSet, basename='event')
 
 
 urlpatterns = [

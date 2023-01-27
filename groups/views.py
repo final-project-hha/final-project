@@ -103,6 +103,8 @@ class MembersAPIView(APIView):
                 "members": members,
                 "admins": admins},
                 status=status.HTTP_200_OK)
+        else:
+            return Response({"admins": admins}, status=status.HTTP_200_OK)
 
 
 class MemberDetailsAPIView(APIView):
@@ -118,7 +120,7 @@ class MemberDetailsAPIView(APIView):
         group = Group.objects.get(id=group_id)
 
         try:
-            admin = Admin.objects.get(user=request.user)
+            admin = group.admins.get(user=request.user)
             member = group.members.get(id=user_id)
         except Admin.DoesNotExist:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -134,7 +136,7 @@ class MemberDetailsAPIView(APIView):
         user = get_user_model().objects.get(id=user_id)
 
         try:
-            Admin.objects.get(user_id=request.user.id)
+            group.admins.get(user_id=request.user.id)
         except Admin.DoesNotExist:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 

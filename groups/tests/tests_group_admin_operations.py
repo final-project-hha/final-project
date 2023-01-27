@@ -74,6 +74,13 @@ class TestGroupAdmin(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data['admins'])+len(res.data['members']), 3)
 
+    def test_get_list_of_group_users_in_the_case_there_are_no_members(self):
+        """Test if there is no member on the group retrieve only admins."""
+        res = self.client.get('/api/groups/1/members/')
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data['admins']), 1)
+
     def test_remove_members_from_group(self):
         """Tests remove members from a group"""
         self.client.post('/api/groups/1/add_member/users/2/')

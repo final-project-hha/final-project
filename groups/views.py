@@ -3,8 +3,10 @@ Views for the API.
 """
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,6 +14,8 @@ from rest_framework.views import APIView
 import users
 from groups.serializers import GroupSerializer
 from groups.models import Group, Admin
+from events.models import Event
+from events.serializers import EventSerializer
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -52,6 +56,21 @@ class GroupViewSet(viewsets.ModelViewSet):
         except Admin.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+    @action(detail=True, methods=['get'])
+    def events(self, request, pk=None):
+        """Listing group events, only for members and admins of the group."""
+        group = get_object_or_404(Group, pk=pk)
+        if request.user in group.members.all():
+            events = Event.objects.all()
+            return Response([EventSerializer(event).data for event in events])
+        try:
+            Admin.objects.get(user=request.user)
+        except Admin.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            events = Event.objects.all()
+            return Response([EventSerializer(event).data for event in events])
+
 
 class MembersAPIView(APIView):
     """Add members to group view"""
@@ -84,6 +103,8 @@ class MembersAPIView(APIView):
                 "members": members,
                 "admins": admins},
                 status=status.HTTP_200_OK)
+        else:
+            return Response({"admins": admins}, status=status.HTTP_200_OK)
 
 
 class MemberDetailsAPIView(APIView):
@@ -99,7 +120,7 @@ class MemberDetailsAPIView(APIView):
         group = Group.objects.get(id=group_id)
 
         try:
-            admin = Admin.objects.get(user=request.user)
+            admin = group.admins.get(user=request.user)
             member = group.members.get(id=user_id)
         except Admin.DoesNotExist:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -110,12 +131,12 @@ class MemberDetailsAPIView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, group_id, user_id):
-        """Making a member an admin and removing from the members list"""
+        """Making a member and admin removing from the members list"""
         group = Group.objects.get(id=group_id)
         user = get_user_model().objects.get(id=user_id)
 
         try:
-            Admin.objects.get(user_id=request.user.id)
+            group.admins.get(user_id=request.user.id)
         except Admin.DoesNotExist:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 

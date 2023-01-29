@@ -17,6 +17,8 @@ from groups.models import Group, Admin
 from events.models import Event
 from events.serializers import EventSerializer
 
+from eventeger.utils import is_user
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     """View for management of groups API."""
@@ -80,7 +82,10 @@ class MembersAPIView(APIView):
     def post(self, request, group_id, user_id):
         """View for adding a member to a group"""
         group = Group.objects.get(id=group_id)
-        user = get_user_model().objects.get(id=user_id)
+        if not is_user(user_id):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            user = get_user_model().objects.get(id=user_id)
         try:
             group.admins.get(user__id=request.user.id)
         except Admin.DoesNotExist:
@@ -118,7 +123,6 @@ class MemberDetailsAPIView(APIView):
     def delete(self, request, group_id, user_id):
         """Admin can remove member from the group"""
         group = Group.objects.get(id=group_id)
-
         try:
             admin = group.admins.get(user=request.user)
             member = group.members.get(id=user_id)
@@ -127,7 +131,9 @@ class MemberDetailsAPIView(APIView):
         except users.models.User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         if admin in group.admins.all():
-            member.delete()
+            with transaction.atomic():
+                group.members.remove(member)
+                group.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, group_id, user_id):

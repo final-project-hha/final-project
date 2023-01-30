@@ -149,7 +149,7 @@ class MemberDetailsAPIView(APIView):
         is_admin = group.admins.filter(user_id=user_id).exists()
         if is_admin:
             with transaction.atomic():
-                admin = Admin.objects.get(user_id=user_id)
+                admin = group.admins.get(user_id=user_id)
                 group.members.add(user)
                 group.admins.remove(admin)
                 Admin.objects.filter(user=user).delete()

@@ -2,6 +2,7 @@
 Common function we are using in our main code
 such as in the views, tests, and serializers.
 """
+from django.contrib.auth import get_user_model
 from groups.models import Admin
 
 
@@ -42,3 +43,14 @@ def is_admin_or_event_creator(user, group, event) -> bool:
         return False
     else:
         return True
+
+
+def is_user(user_id):
+    """
+    Check id there is a user in the database.
+    """
+    try:
+        get_user_model().objects.get(id=user_id)
+    except get_user_model().DoesNotExist:
+        return False
+    return True

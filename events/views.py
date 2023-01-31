@@ -2,6 +2,7 @@
 Views for the Event API.
 """
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
@@ -58,6 +59,9 @@ class EventAPIView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
 
+    @extend_schema(
+        request=EventSerializer
+    )
     def post(self, request, group_id):
         """Create an event with an associated group_id."""
         group = Group.objects.get(id=group_id)

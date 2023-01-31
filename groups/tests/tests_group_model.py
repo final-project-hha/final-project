@@ -69,10 +69,14 @@ class ImageModelTests(TestCase):
             description='this is the first group'
         )
 
+    def tearDown(self):
+        image = Image.objects.first()
+        image.image.delete()
+
     def test_create_image(self):
         with open('media/images/final_project.png', 'rb') as f:
 
-            photo = Image.objects.create(
+            Image.objects.create(
                 name='final_project.png',
                 image=File(f),
                 group=self.group,
@@ -80,11 +84,3 @@ class ImageModelTests(TestCase):
             )
 
             self.assertEqual(len(Image.objects.all()), 1)
-
-
-
-
-
-
-
-

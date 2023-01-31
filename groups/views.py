@@ -12,8 +12,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import users
-from groups.serializers import GroupSerializer
-from groups.models import Group, Admin
+from groups.serializers import GroupSerializer, ImageSerializer
+from groups.models import Group, Admin, Image
 from events.models import Event
 from events.serializers import EventSerializer
 
@@ -155,3 +155,42 @@ class MemberDetailsAPIView(APIView):
                 group.admins.add(admin)
 
         return Response(status=status.HTTP_200_OK)
+
+
+class ImageAPIView(APIView):
+    """Manage Images."""
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def post(self, request, group_id):
+        """Upload an image"""
+        group = Group.objects.get(id=group_id)
+        if not request.data['description']:
+            image = Image.objects.create(
+                name=request.data['name'],
+                image=request.data['image'],
+                group=group,
+                created_by=request.user
+            )
+            return Response(
+                data=ImageSerializer(image).data,
+                status=status.HTTP_201_CREATED)
+        if request.data['description']:
+            image = Image.objects.create(
+                name=request.data['name'],
+                image=request.data['image'],
+                group=group,
+                description=request.data['description'],
+                created_by=request.user
+            )
+            return Response(
+                data=ImageSerializer(image).data,
+                status=status.HTTP_201_CREATED)
+
+    def get(self, request, group_id, image_id):
+        """Get images by id."""
+        image = Image.objects.get(id=image_id)
+        if group_id == image.group.id:
+            return Response(
+                data=ImageSerializer(image).data, status=status.HTTP_200_OK)

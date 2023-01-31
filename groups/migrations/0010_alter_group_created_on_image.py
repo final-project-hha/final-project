@@ -21,13 +21,21 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Image',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('name', models.CharField(max_length=255)),
                 ('image', models.ImageField(upload_to='images/')),
                 ('created_on', models.DateTimeField(auto_now_add=True)),
                 ('description', models.CharField(blank=True, max_length=500)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to=settings.AUTH_USER_MODEL)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='groups.group')),
+                ('created_by', models.ForeignKey(
+                    on_delete=django.db.models.deletion.DO_NOTHING,
+                    to=settings.AUTH_USER_MODEL)),
+                ('group', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE,
+                    to='groups.group')),
             ],
         ),
     ]

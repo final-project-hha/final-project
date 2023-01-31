@@ -43,6 +43,5 @@ class Image(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     description = models.CharField(blank=True, max_length=500)
-    created_by = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)
-
-
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)

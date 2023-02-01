@@ -3,7 +3,7 @@ Serializer for the group API.
 """
 from rest_framework import serializers
 
-from groups.models import Group, Admin
+from groups.models import Group, Admin, Image
 from users.serializers import UserSerializer
 
 
@@ -44,3 +44,11 @@ class GroupSerializer(serializers.ModelSerializer):
 
         self._set_creator_of_group_as_admin(user, group)
         return group
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    """Image Serializer"""
+    class Meta:
+        model = Image
+        fields = '__all__'
+        read_only_fields = ['id', 'group', 'created_by', 'create_on']

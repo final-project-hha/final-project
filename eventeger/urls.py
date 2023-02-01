@@ -13,17 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
+
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
 )
+
 
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
 from users import views
-from groups.views import GroupViewSet, MembersAPIView, MemberDetailsAPIView
+from groups.views import (
+    GroupViewSet,
+    MembersAPIView,
+    MemberDetailsAPIView,
+    ImageAPIView,
+)
 from events.views import EventAPIViewSet, EventAPIView
 
 
@@ -48,6 +57,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', views.CreateUserView.as_view(), name='create'),
     path('api/token/', views.CreateTokenView.as_view(), name='token'),
+    path('api/group/<int:group_id>/add_image/', ImageAPIView.as_view()),
+    path('api/group/<int:group_id>/images/<int:image_id>/',
+         ImageAPIView.as_view()),
     path('api/me/', views.ManageUserView.as_view(), name='me'),
     path('api/groups/<int:group_id>/add_member/users/<int:user_id>/',
          MembersAPIView.as_view(), name='add_member'),
@@ -56,5 +68,5 @@ urlpatterns = [
     path('api/groups/<int:group_id>/members/<int:user_id>/',
          MemberDetailsAPIView.as_view(), name='member_details'),
     path('api/group/<int:group_id>/add_event/',
-         EventAPIView.as_view(), name='add_event')
-]
+         EventAPIView.as_view(), name='add_event'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

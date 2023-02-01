@@ -4,6 +4,7 @@ Views for the API.
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
@@ -176,6 +177,9 @@ class ImageAPIView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
 
+    @extend_schema(
+        request=ImageSerializer
+    )
     def post(self, request, group_id):
         """Upload an image"""
         group = Group.objects.get(id=group_id)

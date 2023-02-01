@@ -74,7 +74,7 @@ class GroupViewSet(viewsets.ModelViewSet):
             return Response([EventSerializer(event).data for event in events])
 
 
-class MembersAPIView(APIView):
+class AddMembersAPIView(APIView):
     """Add members to group view"""
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
@@ -93,6 +93,13 @@ class MembersAPIView(APIView):
         group.members.add(user)
         group.save()
         return Response(status=status.HTTP_200_OK)
+
+
+class ListMembersAPIView(APIView):
+    """View for listing all members and admins
+    related to a specific group"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def get(self, request, group_id):
         """

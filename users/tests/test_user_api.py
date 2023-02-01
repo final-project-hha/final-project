@@ -119,6 +119,7 @@ class AuthenticatedAPITest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, {
+            'id': self.user.id,
             'name': self.user.name,
             'email': self.user.email,
         })

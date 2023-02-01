@@ -4,6 +4,7 @@ Views for the API.
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
@@ -74,7 +75,7 @@ class GroupViewSet(viewsets.ModelViewSet):
             return Response([EventSerializer(event).data for event in events])
 
 
-class MembersAPIView(APIView):
+class AddMembersAPIView(APIView):
     """Add members to group view"""
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
@@ -93,6 +94,13 @@ class MembersAPIView(APIView):
         group.members.add(user)
         group.save()
         return Response(status=status.HTTP_200_OK)
+
+
+class ListMembersAPIView(APIView):
+    """View for listing all members and admins
+    related to a specific group"""
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def get(self, request, group_id):
         """
@@ -169,6 +177,9 @@ class ImageAPIView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
 
+    @extend_schema(
+        request=ImageSerializer
+    )
     def post(self, request, group_id):
         """Upload an image"""
         group = Group.objects.get(id=group_id)

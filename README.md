@@ -57,8 +57,7 @@ django<br>
 - Install the requirements of the project:
 `pip install -r requirements.txt`<br>
 **Install Docker:**
-\[https://docs.docker.com/engine/install/ubuntu/\](https://docs.docker.com/engine/install/ubuntu/
-- After installing Docker:
+[Docker](https://docs.docker.com/engine/install/ubuntu/)
 - create an image maping the localhost and the port 2022
 `docker run -d --name <image_name> -p 127.0.0.1:2022:2022 -e POSTGRES_PASSWORD=postgres postgres`
 - run the image:

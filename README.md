@@ -43,5 +43,34 @@ https://user-images.githubusercontent.com/24811549/217003545-c70e8e2a-b67e-4cf3-
 - Deploy to Google Cloud Platform 
 
 
-
+## Run our project locally 
+**Requirements:**
+git installed<br>
+python 3.8>.10<br>
+django<br>
+- Install python-venv packages:
+`apt install python3.10-venv`<br>
+Then you can install a virtual enviroment using the command line:<br>
+`python3 -m venv .venv`<br>
+- Activate the venv:
+`. .venv/bin/activate`<br>
+- Install the requirements of the project:
+`pip install -r requirements.txt`<br>
+**Install Docker:**
+\[https://docs.docker.com/engine/install/ubuntu/\](https://docs.docker.com/engine/install/ubuntu/
+- After installing Docker:
+- create an image maping the localhost and the port 2022
+`docker run -d --name <image_name> -p 127.0.0.1:2022:2022 -e POSTGRES_PASSWORD=postgres postgres`
+- run the image:
+`docker start <image_name_or_id>`<br>
+- Go to the container and open posgresql:
+`docker exec -it postgres bash psql -U postgres`
+- Create a database called eventeger_db:
+`postgres=# CREATE DATABASE eventeger_db;`
+## Make migrations and run the server
+After the database is set up with docker we need to make migrations and migrate by using the following commands:<br>
+- Inside the directory of the project:
+`python3 manage.py makemigrations && migrate`
+- After all migrations are done we can run the server an look the endpoints in the documentation url http://127.0.0.1:8000/api/docs/
+`python manage.py runserver`
 

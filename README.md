@@ -44,7 +44,8 @@ https://user-images.githubusercontent.com/24811549/217003545-c70e8e2a-b67e-4cf3-
 
 
 ## Run our project locally 
-**Requirements:**
+(Ubuntu oriented) 
+**Requirements:**<br>
 git installed<br>
 python 3.8>.10<br>
 django<br>

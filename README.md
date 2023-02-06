@@ -44,7 +44,6 @@ https://user-images.githubusercontent.com/24811549/217003545-c70e8e2a-b67e-4cf3-
 
 
 ## Run our project locally 
-(Ubuntu oriented)<br> 
 **Requirements:**<br>
 git installed<br>
 python 3.8>.10<br>
@@ -57,8 +56,7 @@ django<br>
 `. .venv/bin/activate`<br>
 - Install the requirements of the project:
 `pip install -r requirements.txt`<br>
-**Install Docker:**
-[Docker](https://docs.docker.com/engine/install/ubuntu/)
+- Install [Docker](https://docs.docker.com/engine/install/)
 - create an image maping the localhost and the port 2022
 `docker run -d --name <image_name> -p 127.0.0.1:2022:2022 -e POSTGRES_PASSWORD=postgres postgres`
 - run the image:

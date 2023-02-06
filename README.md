@@ -1,8 +1,8 @@
-# Eventeger
+# Eventeger API
 Your Social Event Manager
 Final Project at DCI by Hugo, Hila, Alex
 
-## Our app is the result of joining of two ideas:
+## Our app is the result of joining two ideas:
 - An app that brings together the logistic aspects of creating and managing a small event
 - A social app that allows you to stay connected with your loved ones or remote networks
 
@@ -17,7 +17,8 @@ Final Project at DCI by Hugo, Hila, Alex
 🧭 Navigating to Event location via google maps<br>
 
 
-[Screen Recording 2023-02-01 at 13.43.44.mov.zip](https://github.com/final-project-hha/final-project/files/10663821/Screen.Recording.2023-02-01.at.13.43.44.mov.zip)
+https://user-images.githubusercontent.com/24811549/217003545-c70e8e2a-b67e-4cf3-8d70-c2a7b044aae5.mov
+
 
 ## Technologies and Methodologies: 
 - Django RestFramework

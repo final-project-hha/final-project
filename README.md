@@ -50,7 +50,7 @@ python 3.8>.10<br>
 django<br>
 - Install python-venv packages:
 `apt install python3.10-venv`<br>
-Then you can install a virtual enviroment using the command line:<br>
+- Install a virtual enviroment using the command line:<br>
 `python3 -m venv .venv`<br>
 - Activate the venv:
 `. .venv/bin/activate`<br>

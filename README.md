@@ -17,7 +17,11 @@ Final Project at DCI by Hugo, Hila, Alex
 🧭 Navigating to Event location via google maps<br>
 
 
-https://user-images.githubusercontent.com/24811549/217003545-c70e8e2a-b67e-4cf3-8d70-c2a7b044aae5.mov
+## Demo of the creation of Event in a specific group:
+
+https://user-images.githubusercontent.com/24811549/217189552-66e0d04a-288e-4673-891c-3b426310bdae.mov
+
+
 
 
 ## Technologies and Methodologies: 
